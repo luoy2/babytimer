@@ -127,7 +127,7 @@
             <el-button-group class="btn-container">
                 <el-button size="medium" @click="onBodyClick('体温')">体温</el-button>
                 <el-dialog :visible.sync="bodyStats.visible" title="记录体温">
-                    <span class="demonstration">时常</span>
+                    <span class="demonstration">体温</span>
                     <el-slider
                             v-model="bodyStats.temperature"
                             :min="35"
@@ -153,10 +153,22 @@
         <el-table :data="recentRecords" empty-text=" " style="width: 100%" stripe height="900"
                   border>
             <el-table-column prop="start_time" label="开始时间"></el-table-column>
-            <el-table-column prop="record_type" label="类型"></el-table-column>
+            <el-table-column prop="record_type" label="类型"
+                             :filters="allRecordType"
+                             :filter-method="filterRecordType"
+                             filter-palcement="bottom-end"
+                             width="100"
+            >
+                <template slot-scope="scope">
+                    <el-tag
+                            :type="scope.row.record_type in recordTypeStyle ? recordTypeStyle[scope.row.record_type] : 'info'"
+                            disable-transitions>[[ scope.row.record_type ]]
+                    </el-tag>
+                </template>
+            </el-table-column>
             <el-table-column prop="duration" label="时常"></el-table-column>
             <el-table-column prop="comments" label="备注"></el-table-column>
-            <el-table-column prop="tillnow" label="距今"></el-table-column>
+            <el-table-column prop="tillNow" label="距今"></el-table-column>
             <el-table-column
                     fixed="right"
                     label="操作"
@@ -165,7 +177,38 @@
                     <el-button @click="onRowEdit(scope.row)" type="text" size="small">编辑</el-button>
                     <el-button @click="onRowDelete(scope.row)" type="text" size="small">移除</el-button>
                 </template>
+            </el-table-column>
         </el-table>
+        <el-dialog title="修改记录" :visible.sync="formVisible">
+            <el-form ref="form" :model="formData" label-width="80px" size="mini">
+                <el-form-item label="记录类型">
+                    <el-select v-model="formData.record_type" placeholder="请选择记录类型">
+                        <el-option v-for="r in allRecordType" :label="r.text" :value="r.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="记录时间">
+                    <el-col :span="11">
+                        <el-date-picker
+                                v-model="formData.start_time"
+                                type="datetime"
+                                placeholder="选择开始时间"
+                                align="right"
+                                :picker-options="pickerOptions">
+                        </el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="时常">
+                    <el-input v-model="formData.duration"></el-input>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input v-model="formData.comments"></el-input>
+                </el-form-item>
+                <el-form-item size="large">
+                    <el-button type="primary" @click="onFormSubmit('update')">修改</el-button>
+                    <el-button @click="formVisible=false">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </el-row>
 </div>
 
@@ -186,6 +229,28 @@
             data: function () {
                 return {
                     timer: 0,
+                    formVisible: false,
+                    formData: {},
+                    allRecordType: [
+                        {text: '大便', value: '大便'},
+                        {text: '小便', value: '小便'},
+                        {text: '母乳', value: '母乳'},
+                        {text: '奶粉', value: '奶粉'},
+                        {text: '洗澡', value: '洗澡'},
+                        {text: '洗漱', value: '洗漱'},
+                        {text: '抚触', value: '抚触'},
+                        {text: '排气', value: '排气'},
+                        {text: '消毒', value: '消毒'},
+                        {text: '体温', value: '体温'},
+                    ],
+                    recordTypeStyle:
+                        {
+                            "大便": "warning",
+                            "小便": "success",
+                            "母乳": "primary",
+                            "奶粉": "primary",
+                            "体温": "danger"
+                        },
                     currentRecord: {
                         record_type: null,
                         duration: null,
@@ -268,7 +333,7 @@
                         .then(response => {
                                 this.recentRecords = []
                                 for (var a of response.data) {
-                                    a.tillnow = moment.duration(moment().diff(moment(a.start_time), 'minutes'), 'minutes').format("h [hrs], m [min]")
+                                    a.tillNow = moment.duration(moment().diff(moment(a.start_time), 'minutes'), 'minutes').format("h [hrs], m [min]")
                                     this.recentRecords.push(a)
                                 }
                                 this.getStats()
@@ -328,7 +393,7 @@
                 onInterSubmit() {
                     let record_type = this.interaction.type
                     let duration = this.interaction.duration
-                    console.log(record_type)
+                    {#console.log(record_type)#}
                     this.saveRecord(record_type)
                     this.interaction.visible = false
                 }
@@ -352,7 +417,7 @@
                             latest_time = i.start_time
                             break
                         }
-                        console.log(latest_time)
+                        {#console.log(latest_time)#}
                     }
                     if (latest_time) {
                         this.globalStatistics.feedingTimePassed = moment.duration(moment().diff(moment(latest_time), 'minutes'), 'minutes').format("h [小时], m [分钟]")
@@ -361,13 +426,61 @@
                     let urine_cnt = 0
                     for (var i of this.recentRecords) {
                         if (i.record_type === "小便") {
-                            console.log(i.start_time)
+                            {#console.log(i.start_time)#}
                             if (moment().diff(moment(i.start_time), 'minutes') <= 60 * 24) {
                                 urine_cnt += 1
                             }
                         }
                     }
                     this.globalStatistics.urineCnt = urine_cnt + "次"
+                },
+                {#table related#}
+                filterRecordType(value, row) {
+                    return row.record_type === value
+                },
+                filterHandler(value, row, column) {
+                    const property = column['property'];
+                    return row[property] === value;
+                },
+                onRowEdit(row) {
+                    console.log(row)
+                    this.formData = JSON.parse(JSON.stringify(row))
+                    console.log(this.formData)
+                    this.formVisible = true
+                },
+                onRowDelete(row) {
+                    this.formData = JSON.parse(JSON.stringify(row))
+                    this.onFormSubmit("delete")
+                },
+                onFormSubmit(type) {
+                    console.log(this.formData)
+                    this.formData.start_time = moment(this.formData.start_time).format("YYYY-MM-DD HH:mm:ss.SSS")
+                    this.$confirm('是否确认?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        if (type == "update") {
+                            this.recordService.updateRecord(this.formData.id, this.formData)
+                        } else if (type === "delete") {
+                            console.log("delete " + this.formData.id)
+                            this.recordService.deleteRecord(this.formData.id)
+                        }
+                        this.$message({
+                            type: 'success',
+                            message: '成功!'
+                        })
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '取消'
+                        })
+                    }).finally(() => {
+                        this.formVisible = false
+                        this.getRecords()
+                        this.formData = {}
+                    })
+
 
                 }
             }

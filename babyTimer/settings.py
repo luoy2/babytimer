@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -26,8 +25,8 @@ SECRET_KEY = 'z3#zynnxgz@c*4_uj$+157uma%8h&pb)!)4cv3mtc7de&bt@it'
 DEBUG = True
 
 from socket import gethostname, gethostbyname
-ALLOWED_HOSTS = ["127.0.0.1", gethostname(), gethostbyname(gethostname()), ]
 
+ALLOWED_HOSTS = ["127.0.0.1", gethostname(), gethostbyname(gethostname()), ]
 
 # Application definition
 
@@ -55,8 +54,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
+    '*'
 ]
 
 MIDDLEWARE = [
@@ -90,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'babyTimer.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -102,7 +99,6 @@ DATABASES = {
         },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -122,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -136,7 +131,6 @@ USE_TZ = False
 
 TIME_ZONE = 'Asia/Shanghai'
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -147,13 +141,11 @@ STATIC_ROOT = BASE_DIR / "static"
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder'
 ]
-
 
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),

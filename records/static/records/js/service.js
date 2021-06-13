@@ -56,15 +56,15 @@ class RecordService {
     }
 
     updateRecord(projectId, payload) {
-        return this.request.patch(`/api/v2/record/${projectId}`, payload)
+        return this.request.patch(`/api/v2/record/${projectId}/`, payload)
     }
 
     deleteRecord(projectId) {
-        return this.request.delete(`/api/v2/record/${projectId}`)
+        return this.request.delete(`/api/v2/record/${projectId}/`)
     }
 
     fetchRecordById(projectId) {
-        return this.request.get(`/api/v2/record/${projectId}`)
+        return this.request.get(`/api/v2/record/${projectId}/`)
     }
 
 }
