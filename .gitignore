@@ -2,7 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+node_modules/
+static/
+.idea/
 # C extensions
 *.so
 

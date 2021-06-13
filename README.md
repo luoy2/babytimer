@@ -23,3 +23,17 @@ babyTimer旨在打造一个轻量化，易于使用，简单明了的新生儿�
 **近期更新**
 
 **未来展望**
+
+
+
+## 部署
+
+#### 自定义数据库
+
+
+
+## 效果演示
+
+<div align="center">
+    <img src="doc/imgs/tutorial.gif" width="800">
+</div>
