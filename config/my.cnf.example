@@ -1,0 +1,7 @@
+[client]
+database = test
+user = user
+password = password
+default-character-set = utf8
+host = localhost
+port = 3307

@@ -1,0 +1,29 @@
+version: '3.7'
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '12m'
+    max-file: '5'
+  driver: json-file
+
+
+services:
+  interface:
+    container_name: babyTimer
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: luosongsoup/baby-timer:latest
+    restart: always
+    logging: *default-logging
+    ports:
+      - "18009:18009"
+    volumes:
+      - ./backend:/ap/babyTimer
+      - ./config:/ap/config
+#      - ./config/gunicorn.conf.py:/ap/config/gunicorn.conf.py
+      - ./scripts:/scripts
+    command: sh /scripts/start.sh
+    working_dir: /ap/babyTimer/
+#    command: tail -f /dev/null

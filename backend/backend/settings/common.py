@@ -53,11 +53,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "*"
+    "http://*",
 ]
 
 CORS_ALLOW_METHODS = [
-    '*'
+    '*',
 ]
 
 MIDDLEWARE = [

@@ -3,10 +3,11 @@ FROM python:3.6
 # 镜像作
 # 设置 python 环境变量
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
 # 创建 babyTimer 文件夹
-RUN mkdir /babyTimer
+RUN mkdir -p /ap/babyTimer
 # 将 babyTimer 文件夹为工作目录
-WORKDIR /babyTimer
+WORKDIR /ap/babyTimer
 
 # 将当前目录加入到工作目录中（. 表示当前目录）
 ADD backend/requirements.txt /tmp/requirements.txt
