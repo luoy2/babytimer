@@ -3,3 +3,5 @@ djangorestframework==3.12.4
 django-cors-headers
 django_compressor
 django-libsass
+django-filter
+pymysql

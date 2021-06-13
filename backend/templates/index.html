@@ -150,7 +150,7 @@
     </el-row>
     <el-divider content-position="left"></el-divider>
     <el-row type="flex" class="row-bg" justify="center">
-        <el-table :data="recentRecords" empty-text=" " style="width: 100%" stripe height="900"
+        <el-table :data="recentRecords" empty-text=" " style="width: 100%" stripe
                   border>
             <el-table-column prop="start_time" label="开始时间"></el-table-column>
             <el-table-column prop="record_type" label="类型"
@@ -187,15 +187,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="记录时间">
-                    <el-col :span="11">
-                        <el-date-picker
-                                v-model="formData.start_time"
-                                type="datetime"
-                                placeholder="选择开始时间"
-                                align="right"
-                                :picker-options="pickerOptions">
-                        </el-date-picker>
-                    </el-col>
+                    <el-input v-model="formData.start_time"></el-input>
                 </el-form-item>
                 <el-form-item label="时常">
                     <el-input v-model="formData.duration"></el-input>

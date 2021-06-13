@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 from records.models import Record
 from records.serializers import RecordSerializer
