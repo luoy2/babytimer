@@ -1,0 +1,24 @@
+  .card-text {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .card-header {
+    color: #909399;
+  }
+  .item {
+    margin-bottom: 5px;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    width: 240px;
+  }

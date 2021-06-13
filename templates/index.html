@@ -1,0 +1,379 @@
+{% load static %}
+{% load clock %}
+{% load compress %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href={% static "records/css/card.css" %}>
+    <link rel="stylesheet" href={% static "records/css/layout.css" %}>
+    {% compress css %}
+        <link type="text/x-scss" href="{% static 'records/scss/clock.scss' %}" rel="stylesheet" media="screen">
+    {% endcompress %}
+    <style>
+        .el-scrollbar__bar {
+            opacity: 1 !important;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-row type="flex" justify="center" id="clock" class="row-bg">
+        <el-col>
+            <div id="live_clock" class="time" onload="showTime()"></div>
+        </el-col>
+        <el-col :span="10">
+            <el-row type="flex" justify="center" class="row-bg">
+                <el-card class="box-card" shadow="always">
+                    <div slot="header" class="clearfix card-header">
+                        <span>24小时内小便</span>
+                    </div>
+                    <div class="card-text item">
+                        [[ globalStatistics.urineCnt ]]
+                    </div>
+                </el-card>
+            </el-row>
+            <el-row type="flex" justify="center" class="row-bg">
+                <el-card class="box-card" shadow="always">
+                    <div slot="header" class="clearfix card-header">
+                        <span>距离上次喂奶</span>
+                    </div>
+                    <div class="card-text item">
+                        [[ globalStatistics.feedingTimePassed ]]
+                    </div>
+                </el-card>
+            </el-row>
+
+
+        </el-col>
+    </el-row>
+    <el-divider content-position="left"></el-divider>
+    <el-row type="flex" justify="center">
+        <el-col :span="6">
+            <el-button-group class="btn-container">
+                <el-button size="medium" @click="saveRecord('小便')" :loading="loading">小便</el-button>
+                <el-button size="medium" @click="saveRecord('大便')" :loading="loading">大便</el-button>
+            </el-button-group>
+        </el-col>
+        <el-col :span="6">
+            <el-button-group class="btn-container">
+                <el-button size="medium" @click="onFeedingClick('母乳')" :loading="loading">母乳</el-button>
+                <el-button size="medium" @click="onFeedingClick('奶粉')" :loading="loading">奶粉</el-button>
+                <el-dialog :visible.sync="feeding.visible" title="喂奶">
+                    {#                    <span class="demonstration">时常</span>#}
+                    {#                    <el-slider#}
+                    {#                            v-model="feeding.duration"#}
+                    {#                            :max="60"#}
+                    {#                            :marks="feeding.durationMarks"#}
+                    {#                            ref="feedingDurationSlider"#}
+                    {#                            show-input#}
+                    {#                            :show-tooltip="false"#}
+                    {#                    >#}
+                    {#                    </el-slider>#}
+                    {#                    <el-divider content-position="left"></el-divider>#}
+                    <span class="demonstration">容量</span>
+                    <el-switch
+                            v-model="feeding.volumeRecorder">
+                    </el-switch>
+                    <el-slider
+                            v-model="feeding.volume"
+                            v-bind:disabled="!feeding.volumeRecorder"
+                            :min="10"
+                            :marks="feeding.volumeMarks"
+                            ref="feedingVolumeSlider"
+                            show-input
+                            :show-tooltip="false"
+                    >
+                    </el-slider>
+                    <el-divider content-position="left"></el-divider>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button type="success" icon="el-icon-check" circle @click="onFeedingSubmit()"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" circle
+                                   @click="feeding.visible=false"></el-button>
+                    </span>
+                </el-dialog>
+            </el-button-group>
+        </el-col>
+        <el-col :span="6">
+            <el-button-group class="btn-container">
+                <el-button size="medium" @click="saveRecord('洗澡')" :loading="loading">洗澡</el-button>
+                <el-button size="medium" @click="saveRecord('洗漱')" :loading="loading">洗漱</el-button>
+                <el-button size="medium" @click="saveRecord('抚触')" :loading="loading">抚触</el-button>
+                <el-button size="medium" @click="saveRecord('排气')" :loading="loading">排气</el-button>
+                <el-button size="medium" @click="saveRecord('消毒')" :loading="loading">消毒</el-button>
+            </el-button-group>
+            <el-dialog :visible.sync="interaction.visible" title="交互">
+                <span class="demonstration">时常</span>
+                <el-slider
+                        v-model="interaction.duration"
+                        :max="60"
+                        :marks="feeding.durationMarks"
+                        ref="interactionDurationSlider"
+                        show-input
+                        :show-tooltip="false"
+                >
+                </el-slider>
+                <span slot="footer" class="dialog-footer">
+                        <el-button type="success" icon="el-icon-check" circle @click="onInterSubmit()"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" circle
+                                   @click="interaction.visible=false"></el-button>
+                    </span>
+            </el-dialog>
+        </el-col>
+        <el-col :span="6">
+            <el-button-group class="btn-container">
+                <el-button size="medium" @click="onBodyClick('体温')">体温</el-button>
+                <el-dialog :visible.sync="bodyStats.visible" title="记录体温">
+                    <span class="demonstration">时常</span>
+                    <el-slider
+                            v-model="bodyStats.temperature"
+                            :min="35"
+                            :max="42"
+                            :step="0.1"
+                            :marks="bodyStats.temperatureMarks"
+                            ref="bodyStatsTemperatureSlider"
+                            show-input
+                            :show-tooltip="false"
+                    >
+                    </el-slider>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button type="success" icon="el-icon-check" circle @click="onBodySubmit()"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" circle
+                                   @click="bodyStats.visible=false"></el-button>
+                    </span>
+                </el-dialog>
+            </el-button-group>
+        </el-col>
+    </el-row>
+    <el-divider content-position="left"></el-divider>
+    <el-row type="flex" class="row-bg" justify="center">
+        <el-table :data="recentRecords" empty-text=" " style="width: 100%" stripe height="900"
+                  border>
+            <el-table-column prop="start_time" label="开始时间"></el-table-column>
+            <el-table-column prop="record_type" label="类型"></el-table-column>
+            <el-table-column prop="duration" label="时常"></el-table-column>
+            <el-table-column prop="comments" label="备注"></el-table-column>
+            <el-table-column prop="tillnow" label="距今"></el-table-column>
+            <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="100">
+                <template slot-scope="scope">
+                    <el-button @click="onRowEdit(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button @click="onRowDelete(scope.row)" type="text" size="small">移除</el-button>
+                </template>
+        </el-table>
+    </el-row>
+</div>
+
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src={% static "records/js/clock.js" %}></script>
+<script src={% static "records/js/moment_duration_format.js" %}></script>
+<script src={% static "records/js/service.js" %}></script>
+<script>
+    new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: function () {
+                return {
+                    timer: 0,
+                    currentRecord: {
+                        record_type: null,
+                        duration: null,
+                        comments: null,
+                    },
+                    globalStatistics: {
+                        feedingTimePassed: "小时",
+                        urineCnt: "次",
+                    },
+                    feeding: {
+                        type: null,
+                        visible: false,
+                        duration: 20,
+                        volume: 30,
+                        volumeRecorder: true,
+                        durationMarks: {
+                            15: '15min',
+                            30: '30min',
+                            45: '45min',
+                        },
+                        volumeMarks: {
+                            15: '15ml',
+                            30: '30ml',
+                            45: '45ml',
+                            60: '60ml'
+                        }
+                    },
+                    interaction: {
+                        type: null,
+                        visible: false,
+                        duration: 10,
+                    },
+                    bodyStats: {
+                        type: null,
+                        temperature: 36.5,
+                        temperatureMarks:
+                            {
+                                36: '36°C',
+                                37.2: '37.2°C',
+                                40:
+                                    {
+                                        style: {
+                                            color: '#F56C6C'
+                                        },
+                                        label: this.$createElement('strong', '40°C')
+                                    },
+                            }
+                        ,
+                        visible: false
+                    },
+                    recentRecords: [],
+                    loading: true,
+                    errored: false,
+                    recordService: new RecordService()
+                }
+            },
+            mounted() {
+                this.getRecords()
+                if (this.timer) {
+                    clearInterval(this.timer)
+                } else {
+                    this.timer = setInterval(() => {
+                        // 调用相应的接口，渲染数据
+                        this.getRecords()
+                    }, 30000)
+                }
+            }
+            ,
+            destroyed() {
+                clearInterval(this.timer)
+            },
+            methods: {
+                getRecords() {
+                    this.loading = false
+                    this.recordService.getRecordList({
+                        "params": {
+                            "start_time_gte": moment().subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss"),
+                        }
+                    })
+                        .then(response => {
+                                this.recentRecords = []
+                                for (var a of response.data) {
+                                    a.tillnow = moment.duration(moment().diff(moment(a.start_time), 'minutes'), 'minutes').format("h [hrs], m [min]")
+                                    this.recentRecords.push(a)
+                                }
+                                this.getStats()
+                            }
+                        )
+                        .catch(error => {
+                            console.log(error)
+                            this.errored = true
+                        })
+                        .finally(() => this.loading = false)
+                }
+                ,
+                saveRecord(record_type, duration = null, comments = null) {
+                    let newRecord = {};
+                    newRecord.record_type = record_type
+                    if (duration) {
+                        newRecord.duration = duration
+                    }
+                    if (comments) {
+                        newRecord.comments = comments
+                    }
+                    console.log(newRecord)
+                    this.recordService.createRecord(
+                        newRecord
+                    )
+                        .then((response) => {
+                            console.log(response)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                        .finally(() => this.getRecords())
+                    ;
+                }
+                ,
+                onFeedingClick(record_type) {
+                    this.feeding.visible = true
+                    this.feeding.type = record_type
+                    this.feeding.volumeRecorder = this.feeding.type === "奶粉"
+                }
+                ,
+                onFeedingSubmit() {
+                    let record_type = this.feeding.type
+                    {#let duration = this.feeding.duration#}
+                    let comments = ""
+                    if (this.feeding.volumeRecorder) {
+                        comments = this.feeding.volume + "ml"
+                    }
+                    this.saveRecord(record_type, null, comments)
+                    this.feeding.visible = false
+                },
+                onInterClick(record_type) {
+                    this.interaction.visible = true
+                    this.interaction.type = record_type
+                }
+                ,
+                onInterSubmit() {
+                    let record_type = this.interaction.type
+                    let duration = this.interaction.duration
+                    console.log(record_type)
+                    this.saveRecord(record_type)
+                    this.interaction.visible = false
+                }
+                ,
+
+                onBodyClick(record_type) {
+                    this.bodyStats.visible = true
+                    this.bodyStats.type = record_type
+                }
+                ,
+                onBodySubmit() {
+                    let record_type = this.bodyStats.type
+                    let comments = this.bodyStats.temperature + "°C"
+                    this.saveRecord(record_type, null, comments)
+                    this.bodyStats.visible = false
+                },
+                getStats() {
+                    let latest_time = null
+                    for (var i of this.recentRecords) {
+                        if (i.record_type in {'母乳': null, '奶粉': null}) {
+                            latest_time = i.start_time
+                            break
+                        }
+                        console.log(latest_time)
+                    }
+                    if (latest_time) {
+                        this.globalStatistics.feedingTimePassed = moment.duration(moment().diff(moment(latest_time), 'minutes'), 'minutes').format("h [小时], m [分钟]")
+                    }
+
+                    let urine_cnt = 0
+                    for (var i of this.recentRecords) {
+                        if (i.record_type === "小便") {
+                            console.log(i.start_time)
+                            if (moment().diff(moment(i.start_time), 'minutes') <= 60 * 24) {
+                                urine_cnt += 1
+                            }
+                        }
+                    }
+                    this.globalStatistics.urineCnt = urine_cnt + "次"
+
+                }
+            }
+        }
+    )
+
+
+</script>
+</html>

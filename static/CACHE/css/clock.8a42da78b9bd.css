@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
+/* line 6, records/static/records/scss/clock.scss */
+#clock {
+  font-family: "Share Tech Mono", sans-serif;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
+  /* Standard */
+  justify-content: center;
+  align-content: stretch;
+  align-items: center;
+  order: 0;
+  flex: 0 1 auto;
+  align-self: center;
+  color: #606266; }
+  /* line 27, records/static/records/scss/clock.scss */
+  #clock .time {
+    font-size: 6.5em; }
+  /* line 31, records/static/records/scss/clock.scss */
+  #clock .text {
+    margin-top: 30px;
+    font-size: 1em;
+    color: rgba(96, 98, 102, 0.15);
+    text-align: center; }
+    /* line 37, records/static/records/scss/clock.scss */
+    #clock .text a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.1s ease-out; }
+      /* line 43, records/static/records/scss/clock.scss */
+      #clock .text a:hover {
+        color: #606266; }
+  /* line 49, records/static/records/scss/clock.scss */
+  #clock .btn-container {
+    display: flex;
+    margin-top: 15px; }
+    /* line 53, records/static/records/scss/clock.scss */
+    #clock .btn-container a {
+      text-align: center;
+      font-family: "Share Tech Mono", sans-serif;
+      background: transparent;
+      border: none;
+      color: #606266;
+      padding: 10px 15px;
+      margin: 0 10px;
+      text-transform: uppercase;
+      font-size: 2em;
+      cursor: pointer;
+      flex-grow: 1;
+      transition: color 0.1s ease-out; }
+      /* line 71, records/static/records/scss/clock.scss */
+      #clock .btn-container a:hover {
+        color: #c0c4cc; }
