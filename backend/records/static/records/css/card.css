@@ -5,6 +5,7 @@
 
 .card-header {
     color: #909399;
+    font-size: 16px;
 }
 
 .item {
@@ -24,6 +25,7 @@
 .box-card {
     width: 240px;
 }
+
 
 .el-carousel__item {
     width: 240px;

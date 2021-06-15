@@ -25,48 +25,58 @@
         <el-col>
             <div id="live_clock" class="time" onload="showTime()"></div>
         </el-col>
-        <el-col :span="16">
-            <el-carousel :interval="2000" type="card" height="150px">
-                <el-carousel-item>
-                    <el-card class="box-card" shadow="always">
-                        <div slot="header" class="clearfix card-header">
-                            <span>24小时内小便</span>
-                        </div>
-                        <div class="card-text item">
-                            [[ globalStatistics.urineCnt ]]
-                        </div>
-                    </el-card>
-                </el-carousel-item>
-                <el-carousel-item>
-                    <el-card class="box-card" shadow="always">
-                        <div slot="header" class="clearfix card-header">
-                            <span>距离上次喂奶</span>
-                        </div>
-                        <div class="card-text item">
-                            [[ globalStatistics.feedingTimePassed ]]
-                        </div>
-                    </el-card>
-                </el-carousel-item>
-                <el-carousel-item>
-                    <el-card class="box-card" shadow="always">
-                        <div slot="header" class="clearfix card-header">
-                            <span>距离上次服用维他命</span>
-                        </div>
-                        <div class="card-text item">
-                            [[ globalStatistics.vitamin ]]
-                        </div>
-                    </el-card>
-                </el-carousel-item>
-            </el-carousel>
-
-            <el-row type="flex" justify="center" class="row-bg">
-
-            </el-row>
-            <el-row type="flex" justify="center" class="row-bg">
-
-            </el-row>
-
-
+        <el-col :span="10">
+            <el-card>
+                <el-row><span class="card-header">24小时内小便</span>
+                    <div class="card-text item">
+                        [[ globalStatistics.urineCnt ]]
+                    </div>
+                </el-row>
+                <el-row><span class="card-header">距离上次喂奶</span>
+                    <div class="card-text item">
+                        [[ globalStatistics.feedingTimePassed ]]
+                    </div>
+                </el-row>
+                <el-row><span class="card-header">距离上次服用维他命</span>
+                    <div class="card-text item">
+                        [[ globalStatistics.vitamin ]]
+                    </div>
+                </el-row>
+            </el-card>
+            {#            <el-carousel :interval="2000" height="150px">#}
+            {#                <el-carousel-item>#}
+            {##}
+            {##}
+            {#                    <el-card class="box-card" shadow="always">#}
+            {#                        <div slot="header" class="clearfix card-header">#}
+            {#                            <span>24小时内小便</span>#}
+            {#                        </div>#}
+            {#                        <div class="card-text item">#}
+            {#                            [[ globalStatistics.urineCnt ]]#}
+            {#                        </div>#}
+            {#                    </el-card>#}
+            {#                </el-carousel-item>#}
+            {#                <el-carousel-item>#}
+            {#                    <el-card class="box-card" shadow="always">#}
+            {#                        <div slot="header" class="clearfix card-header">#}
+            {#                            <span>距离上次喂奶</span>#}
+            {#                        </div>#}
+            {#                        <div class="card-text item">#}
+            {#                            [[ globalStatistics.feedingTimePassed ]]#}
+            {#                        </div>#}
+            {#                    </el-card>#}
+            {#                </el-carousel-item>#}
+            {#                <el-carousel-item>#}
+            {#                    <el-card class="box-card" shadow="always">#}
+            {#                        <div slot="header" class="clearfix card-header">#}
+            {#                            <span>距离上次服用维他命</span>#}
+            {#                        </div>#}
+            {#                        <div class="card-text item">#}
+            {#                            [[ globalStatistics.vitamin ]]#}
+            {#                        </div>#}
+            {#                    </el-card>#}
+            {#                </el-carousel-item>#}
+            {#            </el-carousel>#}
         </el-col>
     </el-row>
     <el-divider content-position="left"></el-divider>
