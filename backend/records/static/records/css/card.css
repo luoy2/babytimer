@@ -1,24 +1,39 @@
-  .card-text {
+.card-text {
     font-size: 22px;
     text-align: center;
-  }
+}
 
-  .card-header {
+.card-header {
     color: #909399;
-  }
-  .item {
-    margin-bottom: 5px;
-  }
+}
 
-  .clearfix:before,
-  .clearfix:after {
+.item {
+    margin-bottom: 5px;
+}
+
+.clearfix:before,
+.clearfix:after {
     display: table;
     content: "";
-  }
-  .clearfix:after {
-    clear: both
-  }
+}
 
-  .box-card {
+.clearfix:after {
+    clear: both
+}
+
+.box-card {
     width: 240px;
-  }
+}
+
+.el-carousel__item {
+    width: 240px;
+    color: #475669;
+    font-size: 14px;
+    opacity: 0.75;
+    margin: 0;
+}
+
+.el-carousel {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}

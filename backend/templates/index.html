@@ -25,26 +25,45 @@
         <el-col>
             <div id="live_clock" class="time" onload="showTime()"></div>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="16">
+            <el-carousel :interval="2000" type="card" height="150px">
+                <el-carousel-item>
+                    <el-card class="box-card" shadow="always">
+                        <div slot="header" class="clearfix card-header">
+                            <span>24小时内小便</span>
+                        </div>
+                        <div class="card-text item">
+                            [[ globalStatistics.urineCnt ]]
+                        </div>
+                    </el-card>
+                </el-carousel-item>
+                <el-carousel-item>
+                    <el-card class="box-card" shadow="always">
+                        <div slot="header" class="clearfix card-header">
+                            <span>距离上次喂奶</span>
+                        </div>
+                        <div class="card-text item">
+                            [[ globalStatistics.feedingTimePassed ]]
+                        </div>
+                    </el-card>
+                </el-carousel-item>
+                <el-carousel-item>
+                    <el-card class="box-card" shadow="always">
+                        <div slot="header" class="clearfix card-header">
+                            <span>距离上次服用维他命</span>
+                        </div>
+                        <div class="card-text item">
+                            [[ globalStatistics.vitamin ]]
+                        </div>
+                    </el-card>
+                </el-carousel-item>
+            </el-carousel>
+
             <el-row type="flex" justify="center" class="row-bg">
-                <el-card class="box-card" shadow="always">
-                    <div slot="header" class="clearfix card-header">
-                        <span>24小时内小便</span>
-                    </div>
-                    <div class="card-text item">
-                        [[ globalStatistics.urineCnt ]]
-                    </div>
-                </el-card>
+
             </el-row>
             <el-row type="flex" justify="center" class="row-bg">
-                <el-card class="box-card" shadow="always">
-                    <div slot="header" class="clearfix card-header">
-                        <span>距离上次喂奶</span>
-                    </div>
-                    <div class="card-text item">
-                        [[ globalStatistics.feedingTimePassed ]]
-                    </div>
-                </el-card>
+
             </el-row>
 
 
@@ -145,6 +164,7 @@
                                    @click="bodyStats.visible=false"></el-button>
                     </span>
                 </el-dialog>
+                <el-button size="medium" @click="saveRecord('维他命')" :loading="loading">维他命</el-button>
             </el-button-group>
         </el-col>
     </el-row>
@@ -234,6 +254,7 @@
                         {text: '排气', value: '排气'},
                         {text: '消毒', value: '消毒'},
                         {text: '体温', value: '体温'},
+                        {text: '维他命', value: '维他命'},
                     ],
                     recordTypeStyle:
                         {
@@ -251,6 +272,7 @@
                     globalStatistics: {
                         feedingTimePassed: "小时",
                         urineCnt: "次",
+                        vitamin: "小时",
                     },
                     feeding: {
                         type: null,
@@ -403,8 +425,9 @@
                     this.bodyStats.visible = false
                 },
                 getStats() {
+                    let i;
                     let latest_time = null
-                    for (var i of this.recentRecords) {
+                    for (i of this.recentRecords) {
                         if (i.record_type in {'母乳': null, '奶粉': null}) {
                             latest_time = i.start_time
                             break
@@ -416,7 +439,7 @@
                     }
 
                     let urine_cnt = 0
-                    for (var i of this.recentRecords) {
+                    for (i of this.recentRecords) {
                         if (i.record_type === "小便") {
                             {#console.log(i.start_time)#}
                             if (moment().diff(moment(i.start_time), 'minutes') <= 60 * 24) {
@@ -425,6 +448,19 @@
                         }
                     }
                     this.globalStatistics.urineCnt = urine_cnt + "次"
+
+                    latest_time = null
+                    for (i of this.recentRecords) {
+                        if (i.record_type === "维他命") {
+                            latest_time = i.start_time
+                            break
+                        }
+                        {#console.log(latest_time)#}
+                    }
+                    if (latest_time) {
+                        this.globalStatistics.vitamin = moment.duration(moment().diff(moment(latest_time), 'minutes'), 'minutes').format("h [小时], m [分钟]")
+                    }
+
                 },
                 {#table related#}
                 filterRecordType(value, row) {
